@@ -1,0 +1,15 @@
+[
+  { "scenario_id": "DEFAULT_NOMINAL", "region": "Global/All", "server_load": 25, "bandwidth_utilization": 30, "adjusters_available": 450, "api_latency_ms": 45, "status": "Healthy" },
+  { "scenario_id": "SIM_ELEVATED_01", "region": "Japan-Pacific", "server_load": 55, "bandwidth_utilization": 60, "adjusters_available": 120, "api_latency_ms": 110, "status": "Elevated" },
+  { "scenario_id": "SIM_ELEVATED_02", "region": "SE-Asia", "server_load": 62, "bandwidth_utilization": 58, "adjusters_available": 95, "api_latency_ms": 140, "status": "Elevated" },
+  { "scenario_id": "SIM_WARNING_01", "region": "Florida-Corridor", "server_load": 78, "bandwidth_utilization": 82, "adjusters_available": 45, "api_latency_ms": 280, "status": "Warning" },
+  { "scenario_id": "SIM_WARNING_02", "region": "Maharashtra-Zone", "server_load": 81, "bandwidth_utilization": 79, "adjusters_available": 38, "api_latency_ms": 310, "status": "Warning" },
+  { "scenario_id": "SIM_CRITICAL_01", "region": "Tokyo-Metro", "server_load": 94, "bandwidth_utilization": 96, "adjusters_available": 12, "api_latency_ms": 650, "status": "Critical" },
+  { "scenario_id": "SIM_CRITICAL_02", "region": "Jakarta-Coastal", "server_load": 96, "bandwidth_utilization": 98, "adjusters_available": 8, "api_latency_ms": 820, "status": "Critical" },
+  { "scenario_id": "SIM_CRITICAL_03", "region": "Mumbai-Metro", "server_load": 92, "bandwidth_utilization": 95, "adjusters_available": 4, "api_latency_ms": 780, "status": "Critical" },
+  { "scenario_id": "EV_01_QUAKE", "region": "Himalayan-Belt", "server_load": 98, "bandwidth_utilization": 99, "adjusters_available": 2, "api_latency_ms": 1200, "status": "Critical" },
+  { "scenario_id": "EV_02_HURRICANE", "region": "Atlantic-Seaboard", "server_load": 91, "bandwidth_utilization": 94, "adjusters_available": 15, "api_latency_ms": 580, "status": "Critical" },
+  { "scenario_id": "EV_03_FLOOD", "region": "Monsoon-Grid", "server_load": 88, "bandwidth_utilization": 85, "adjusters_available": 22, "api_latency_ms": 420, "status": "Warning" },
+  { "scenario_id": "RECOVERY_01", "region": "Japan-Recovery", "server_load": 45, "bandwidth_utilization": 50, "adjusters_available": 210, "api_latency_ms": 85, "status": "Healthy" },
+  { "scenario_id": "RECOVERY_02", "region": "SE-Asia-Recovery", "server_load": 40, "bandwidth_utilization": 42, "adjusters_available": 280, "api_latency_ms": 70, "status": "Healthy" }
+]

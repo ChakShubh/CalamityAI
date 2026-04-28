@@ -1,0 +1,50 @@
+[
+  {
+    "Disaster_ID": 1,
+    "Disaster_Type": "Hurricane",
+    "Location": { "Country": "USA", "City": "Miami", "Latitude": 25.7617, "Longitude": -80.1918 },
+    "Magnitude": 4.4,
+    "Date": "2026-04-25T18:00:00.000Z",
+    "Demo_Start_Offset_Hours": 4,
+    "Fatalities": 0,
+    "Economic_Loss_USD": 1200000000
+  },
+  {
+    "Disaster_ID": 2,
+    "Disaster_Type": "Flood",
+    "Location": { "Country": "India", "City": "Mumbai", "Latitude": 19.076, "Longitude": 72.8777 },
+    "Magnitude": 5.2,
+    "Date": "2026-04-25T10:00:00.000Z",
+    "Fatalities": 0,
+    "Economic_Loss_USD": 890000000
+  },
+  {
+    "Disaster_ID": 3,
+    "Disaster_Type": "Flood",
+    "Location": { "Country": "Indonesia", "City": "Jakarta", "Latitude": -6.2088, "Longitude": 106.8456 },
+    "Magnitude": 4.8,
+    "Date": "2026-04-25T14:30:00.000Z",
+    "Demo_Start_Offset_Hours": 14,
+    "Fatalities": 0,
+    "Economic_Loss_USD": 650000000
+  },
+  {
+    "Disaster_ID": 4,
+    "Disaster_Type": "Wildfire",
+    "Location": { "Country": "Australia", "City": "Sydney", "Latitude": -33.8688, "Longitude": 151.2093 },
+    "Magnitude": 3.6,
+    "Date": "2026-04-25T22:00:00.000Z",
+    "Fatalities": 0,
+    "Economic_Loss_USD": 420000000
+  },
+  {
+    "Disaster_ID": 5,
+    "Disaster_Type": "Flood",
+    "Location": { "Country": "India", "City": "Mumbai", "Latitude": 19.076, "Longitude": 72.8777 },
+    "Magnitude": 4.9,
+    "Date": "2026-04-28T02:00:00.000Z",
+    "Demo_Start_Offset_Hours": -6,
+    "Fatalities": 0,
+    "Economic_Loss_USD": 510000000
+  }
+]

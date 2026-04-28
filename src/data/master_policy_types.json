@@ -1,0 +1,58 @@
+[
+  {
+    "policy_type": "Homeowners",
+    "description": "Property protection for owner-occupied homes covering structure and major household assets.",
+    "ideal_for": "House owners with medium to high property value in managed metros.",
+    "primary_covers": ["Fire and smoke", "Storm and wind", "Water ingress", "Structural damage"],
+    "typical_cover_min": 120000,
+    "typical_cover_max": 1200000
+  },
+  {
+    "policy_type": "Renters",
+    "description": "Covers personal belongings, temporary accommodation, and liability for rented homes.",
+    "ideal_for": "Tenants who need affordable protection for personal contents.",
+    "primary_covers": ["Belongings loss", "Temporary relocation", "Tenant liability"],
+    "typical_cover_min": 40000,
+    "typical_cover_max": 300000
+  },
+  {
+    "policy_type": "Commercial Property",
+    "description": "Protects business premises, inventory, and operational assets against catastrophe losses.",
+    "ideal_for": "SMEs and enterprises with property, inventory, or mission-critical equipment.",
+    "primary_covers": ["Building and fit-out", "Inventory and equipment", "Business interruption"],
+    "typical_cover_min": 200000,
+    "typical_cover_max": 2500000
+  },
+  {
+    "policy_type": "Auto",
+    "description": "Vehicle and third-party liability coverage with optional catastrophe riders.",
+    "ideal_for": "Customers with private or commercial vehicles in risk-prone corridors.",
+    "primary_covers": ["Collision and flood damage", "Third-party liability", "Repair and replacement"],
+    "typical_cover_min": 30000,
+    "typical_cover_max": 400000
+  },
+  {
+    "policy_type": "Flood Premium",
+    "description": "Supplementary flood-focused protection for high runoff and surge exposure areas.",
+    "ideal_for": "Customers in monsoon/coastal zones or low-lying flood-prone neighborhoods.",
+    "primary_covers": ["Inland flood", "Storm surge", "Water contamination and cleanup"],
+    "typical_cover_min": 80000,
+    "typical_cover_max": 900000
+  },
+  {
+    "policy_type": "Life",
+    "description": "Long-term financial protection for dependents and liabilities.",
+    "ideal_for": "Primary earners, families with dependents, and loan-backed households.",
+    "primary_covers": ["Income protection", "Death benefit", "Family financial continuity"],
+    "typical_cover_min": 100000,
+    "typical_cover_max": 2500000
+  },
+  {
+    "policy_type": "Health",
+    "description": "Medical expense protection including hospitalization and emergency care.",
+    "ideal_for": "Individuals/families requiring inpatient and major illness protection.",
+    "primary_covers": ["Hospitalization", "Emergency treatment", "Critical care"],
+    "typical_cover_min": 50000,
+    "typical_cover_max": 750000
+  }
+]
