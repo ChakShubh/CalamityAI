@@ -1,4 +1,4 @@
-# 🌪️ CalamityAI — Catastrophe Risk Intelligence & Crisis Command Center
+# 🌪️ CalamityAI - Catastrophe Risk Intelligence & Crisis Command Center
 
 [![React](https://img.shields.io/badge/React-18.3-61DAFB?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -14,7 +14,7 @@ By unifying early predictive warning signals, multi-modal ingestion, geospatial 
 
 ## 📌 Executive Summary & Description
 
-When major natural disasters strike—such as Category 5 hurricanes in Miami, catastrophic monsoons in Mumbai, tidal storm surges in Jakarta, or severe bushfires in Sydney—insurers and emergency coordinators face three existential challenges:
+When major natural disasters strike-such as Category 5 hurricanes in Miami, catastrophic monsoons in Mumbai, tidal storm surges in Jakarta, or severe bushfires in Sydney-insurers and emergency coordinators face three existential challenges:
 
 1. **Information Asymmetry & Lag**: Early warning signals from weather sensors, satellite imagery, and news feeds are fragmented and delayed.
 2. **Infrastructure Overload**: Influx of customer claims and queries overwhelms adjusters, call centers, and IT infrastructure.
