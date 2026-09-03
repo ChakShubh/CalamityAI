@@ -182,7 +182,7 @@ export default function AnalyticsDashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-100 tracking-tight flex items-center gap-3">
-            <BarChart3 className="w-7 h-7 text-cyan-400" /> Executive Analytics & Manpower Projection
+            <BarChart3 className="w-7 h-7 text-cyan-400" /> Executive Analytics Suite
           </h1>
           <p className="text-sm text-slate-500 mt-1">Real-time resource allocation and claim resolution forecasting</p>
                <p className="text-xs text-slate-500 mt-2">
@@ -308,7 +308,7 @@ export default function AnalyticsDashboard() {
                   paddingAngle={5}
                   dataKey="value"
                 >
-                  {policyDistribution.map((entry, index) => (
+                  {policyDistribution.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>

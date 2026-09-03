@@ -9,7 +9,7 @@ export type HolderCoords = {
 };
 
 /** Metro sectors on land — shared with policy generation for consistent bearings. */
-const CITY_LANDMARKS = cityLandmarks as Record<string, [number, number][]>;
+const CITY_LANDMARKS = cityLandmarks as unknown as Record<string, [number, number][]>;
 
 const DISPLAY_LAND_BOX: Record<string, { minLat: number; maxLat: number; minLon: number; maxLon: number }> = {
   Miami: { minLat: 25.23, maxLat: 26.34, minLon: -80.62, maxLon: -80.12 },
@@ -46,8 +46,8 @@ const CITY_ANCHORS: Record<string, [number, number]> = {
 };
 
 /**
- * Blend raw policy coords toward a known urban anchor so demo points sit on land
- * instead of random ocean offsets.
+ * Blend raw policy coords toward known urban anchors so geo-coordinates sit on land
+ * and adhere strictly to verified municipal perimeters.
  */
 export function holderDisplayLatLng(p: HolderCoords): [number, number] {
   const anchor = CITY_ANCHORS[p.city];

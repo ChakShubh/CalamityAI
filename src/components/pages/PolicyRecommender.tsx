@@ -65,7 +65,7 @@ function sigmoid(x: number) {
 }
 
 export default function PolicyRecommender() {
-  const { pastClaims, disasters, policyHolders, managedCities, theme } = useData();
+  const { pastClaims, disasters, policyHolders, managedCities } = useData();
 
   const [form, setForm] = useState<FormState>({
     fullName: '',

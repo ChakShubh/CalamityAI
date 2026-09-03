@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react';
 import { useData } from '../../context/DataContext';
 import { getEventTemporalPhase } from '../../utils/eventPhase';
 import { EXPOSURE_RADIUS_KM_PER_MAGNITUDE } from '../../constants/exposureModel';
-import { ShieldAlert, AlertTriangle, CheckCircle, Search, MapPin, Mail, ClipboardList, Filter, ArrowUpDown, Sparkles } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, CheckCircle, Search, MapPin, Mail, ClipboardList, Filter, ArrowUpDown, Sparkles, Phone } from 'lucide-react';
 
 function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) return 999999;
@@ -88,10 +88,18 @@ export default function HighPriorityDashboard() {
     return cases.sort((a, b) => a.distanceKm - b.distanceKm); // Sort by closest to epicenter
   }, [policyHolders, disasters, dashboardFocusCity]);
 
+  const [goodwillSentIds, setGoodwillSentIds] = useState<Set<string>>(new Set());
+
+  const handleSendGoodwill = (id: string, holder: string) => {
+    if (goodwillSentIds.has(id)) return;
+    setGoodwillSentIds(prev => new Set(prev).add(id));
+    addToast(`Automated Goodwill & Safety Check email sent to ${holder}.`, 'success');
+  };
+
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
   const filteredCases = useMemo(() => {
-    let sorted = priorityCases.filter(c => {
+    const sorted = priorityCases.filter(c => {
       const matchesSearch = c.policyHolder.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             c.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             c.id.toLowerCase().includes(searchTerm.toLowerCase());
@@ -216,7 +224,7 @@ export default function HighPriorityDashboard() {
             </div>
             <div>
                <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Goodwill Outreach Sent</div>
-               <div className="text-2xl font-bold text-emerald-400 font-mono">0</div>
+               <div className="text-2xl font-bold text-emerald-400 font-mono">{goodwillSentIds.size}</div>
             </div>
          </div>
       </div>
@@ -244,7 +252,7 @@ export default function HighPriorityDashboard() {
                 <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-200" onClick={() => requestSort('status')}>
                   Status <ArrowUpDown className="w-3 h-3 inline ml-1" />
                 </th>
-                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Goodwill Action</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Goodwill Action</th>
               </tr>
             </thead>
             <tbody>
@@ -259,7 +267,7 @@ export default function HighPriorityDashboard() {
                         {category} ({casesInCategory.length} cases)
                       </td>
                     </tr>
-                    {casesInCategory.slice(0, 50).map((claim, idx) => (
+                    {casesInCategory.slice(0, 100).map((claim) => (
                       <tr key={claim.id} className={`border-b border-slate-800 hover:bg-slate-800/30 transition-colors ${claim.isUltraUrgent ? 'bg-rose-500/5' : ''}`}>
                         <td className="p-4">
                           <span className="text-sm font-mono text-slate-300">{claim.id}</span>
@@ -297,28 +305,42 @@ export default function HighPriorityDashboard() {
                             {claim.status}
                           </span>
                         </td>
-                        <td className="p-4 flex gap-2">
-                          <button 
-                            onClick={() => addToast(`AI Assistant evaluating claim ${claim.id}. Marking as ${claim.isUltraUrgent ? 'ULTRA' : 'High'} priority.`, 'info')}
-                            className={`p-2 rounded-lg transition-colors ${claim.isUltraUrgent ? 'bg-rose-600 text-white animate-pulse' : 'bg-slate-800 hover:bg-slate-700 text-cyan-400'}`}
-                            title="AI Assistant Analysis"
-                          >
-                            <Sparkles className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={() => addToast(`Dispatching emergency response team to ${claim.policyHolder}'s location...`, 'info')}
-                            className="p-2 bg-slate-800 hover:bg-slate-700 text-rose-400 rounded-lg transition-colors" 
-                            title="Dispatch Response Team"
-                          >
-                            <ShieldAlert className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={() => addToast(`Automated Goodwill & Safety Check email sent to ${claim.policyHolder}.`, 'success')}
-                            className="p-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 rounded-lg transition-colors" 
-                            title="Send Goodwill Check"
-                          >
-                            <Mail className="w-4 h-4" />
-                          </button>
+                        <td className="p-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <button 
+                              onClick={() => addToast(`AI Assistant evaluating claim ${claim.id}. Marking as ${claim.isUltraUrgent ? 'ULTRA' : 'High'} priority.`, 'info')}
+                              className={`p-2 rounded-lg transition-colors ${claim.isUltraUrgent ? 'bg-rose-600 text-white animate-pulse' : 'bg-slate-800 hover:bg-slate-700 text-cyan-400'}`}
+                              title="AI Assistant Analysis"
+                            >
+                              <Sparkles className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={() => addToast(`Dispatching emergency response team to ${claim.policyHolder}'s location...`, 'info')}
+                              className="p-2 bg-slate-800 hover:bg-slate-700 text-rose-400 rounded-lg transition-colors" 
+                              title="Dispatch Response Team"
+                            >
+                              <ShieldAlert className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={() => addToast(`Initiating secure line to ${claim.policyHolder}...`, 'info')}
+                              className="p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-lg transition-colors" 
+                              title="Direct Call"
+                            >
+                              <Phone className="w-4 h-4" />
+                            </button>
+                            <button 
+                              disabled={goodwillSentIds.has(claim.id)}
+                              onClick={() => handleSendGoodwill(claim.id, claim.policyHolder)}
+                              className={`p-2 rounded-lg transition-colors ${
+                                goodwillSentIds.has(claim.id) 
+                                  ? 'bg-slate-800/50 text-slate-600 cursor-not-allowed' 
+                                  : 'bg-slate-800 hover:bg-slate-700 text-cyan-400'
+                              }`}
+                              title={goodwillSentIds.has(claim.id) ? "Goodwill Check Sent" : "Send Goodwill Check"}
+                            >
+                              <Mail className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

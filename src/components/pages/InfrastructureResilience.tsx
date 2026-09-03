@@ -126,7 +126,7 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 };
 
 export default function InfrastructureResilience() {
-  const { infraScenario, infraHealth, setInfraScenarioById } = useData();
+  const { infraScenario } = useData();
 
   // Pressure = ((PredictedSurge / AdjustersAvailable) * 0.7) + ((ServerLoad + (api_latency_ms / 10)) * 0.3)
   const predictedSurge = infraScenario.server_load * 1.2;
@@ -157,7 +157,6 @@ export default function InfrastructureResilience() {
     });
   }, [infraScenario.server_load, predictedSurge]);
 
-  const isCritical = pressure > 75;
 
   const orchestrationActions = pressure > 60 ? [
     { label: 'Route Tier-1 to AI Chatbot', desc: 'Offload low-priority claims to automated processing to reduce server load.', icon: <Cpu className="w-4 h-4" /> },

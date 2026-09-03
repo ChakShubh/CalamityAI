@@ -1,9 +1,9 @@
 import { Fragment, useState, useMemo } from 'react';
-import { useData, type DisasterEvent } from '../../context/DataContext';
+import { useData } from '../../context/DataContext';
 import { getEventTemporalPhase } from '../../utils/eventPhase';
 import { hashString } from '../../utils/regionScale';
 import { EXPOSURE_RADIUS_KM_PER_MAGNITUDE } from '../../constants/exposureModel';
-import { ShieldAlert, AlertTriangle, CheckCircle, XCircle, Search, MapPin, Phone, Mail, Filter, ArrowUpDown, Sparkles } from 'lucide-react';
+import { ShieldAlert, AlertTriangle, CheckCircle, XCircle, Search, MapPin, Filter, ArrowUpDown } from 'lucide-react';
 
 function getDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
   if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) return 999999;
@@ -34,7 +34,7 @@ export default function LeakageDashboard() {
     const pool = dashboardFocusCity
       ? policyHolders.filter((p) => p.city === dashboardFocusCity)
       : policyHolders;
-    const filedClaims = pool.slice(0, 900).map((p, i) => {
+    const filedClaims = pool.slice(0, 1500).map((p, i) => {
       const nearestDisaster =
         disasters.find((d) => d.Location.City === p.city) ?? null;
       const phase = nearestDisaster ? getEventTemporalPhase(nearestDisaster.Date) : 'active';
@@ -54,10 +54,10 @@ export default function LeakageDashboard() {
         ? nearestDisaster.Magnitude * EXPOSURE_RADIUS_KM_PER_MAGNITUDE
         : 72;
       const geoLeak = nearestDisaster ? nearestDist > impactRadiusKm : false;
-      const duplicatePattern = h % 61 === 0;
-      const inflatedClaim = h % 100 < 18;
+      const duplicatePattern = h % 40 === 0;
+      const inflatedClaim = h % 100 < 30;
       /** Timing anomaly is only meaningful in pre-calamity forecasting workflows. */
-      const timingMismatch = isPreCalamity && h % 89 < 11;
+      const timingMismatch = isPreCalamity && h % 50 < 15;
       const isFlagged = geoLeak || duplicatePattern || inflatedClaim || timingMismatch;
 
       let leakReason = '';
@@ -94,13 +94,52 @@ export default function LeakageDashboard() {
       };
     });
 
-    return filedClaims.filter(c => c.isFlagged).sort((a, b) => b.amountClaimed - a.amountClaimed);
+    // 2. Synthesize post-calamity forensic recovery audit flags for resolved impact zones
+    const postCalamityCities = ['Miami', 'Jakarta'];
+    const extraFlags: typeof filedClaims = [];
+    const reasons = [
+      'Geospatial: Outside verified impact radius',
+      'Systemic: Duplicate filing signature detected',
+      'AI Audit: Inflated structural damage estimate',
+      'Temporal: Claim filed prior to landfall'
+    ];
+
+    pool.forEach((p, i) => {
+      if (postCalamityCities.includes(p.city) && extraFlags.length < 15 && i % 4 === 0) {
+        const h = hashString(p.policy_id || `${p.name}-${i}`);
+        const amount = p.max_cover_amount * (0.3 + (h % 50) / 100);
+        extraFlags.push({
+          id: p.policy_id || `CLM-P-${1000 + i}`,
+          policyHolder: p.name,
+          city: p.city,
+          policyType: p.policy_type,
+          amountClaimed: amount,
+          nearestDisaster: p.city === 'Miami' ? 'Hurricane' : 'Storm Surge',
+          distanceKm: 85 + (h % 150),
+          impactRadiusKm: 60,
+          isFlagged: true,
+          timingTag: 'Post-Calamity',
+          status: 'Post-Event Recovery Fraud Check',
+          action: 'Historical Recovery Audit',
+          leakReason: reasons[h % reasons.length]
+        });
+      }
+    });
+
+    return [...filedClaims.filter(c => c.isFlagged), ...extraFlags].sort((a, b) => b.amountClaimed - a.amountClaimed);
   }, [policyHolders, disasters, dashboardFocusCity]);
+
+  const [resolvedIds, setResolvedIds] = useState<Set<string>>(new Set());
+
+  const handleResolve = (id: string) => {
+    setResolvedIds(prev => new Set(prev).add(id));
+    addToast(`Claim ${id} verified and resolved. Capital risk cleared.`, 'success');
+  };
 
   const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
   const filteredFlags = useMemo(() => {
-    let sorted = flaggedClaims.filter(c => {
+    const sorted = flaggedClaims.filter(c => {
       const matchesSearch = c.policyHolder.toLowerCase().includes(searchTerm.toLowerCase()) || 
                             c.city.toLowerCase().includes(searchTerm.toLowerCase()) ||
                             c.id.toLowerCase().includes(searchTerm.toLowerCase());
@@ -111,7 +150,7 @@ export default function LeakageDashboard() {
       if (timingFilter === 'Active') matchesTiming = c.timingTag === 'Active Calamity';
       if (timingFilter === 'Post-Calamity') matchesTiming = c.timingTag === 'Post-Calamity';
 
-      return matchesSearch && matchesRegion && matchesTiming;
+      return matchesSearch && matchesRegion && matchesTiming && !resolvedIds.has(c.id);
     });
 
     if (sortConfig !== null) {
@@ -126,7 +165,7 @@ export default function LeakageDashboard() {
       });
     }
     return sorted;
-  }, [flaggedClaims, searchTerm, selectedRegion, timingFilter, sortConfig]);
+  }, [flaggedClaims, searchTerm, selectedRegion, timingFilter, sortConfig, resolvedIds]);
 
   const requestSort = (key: string) => {
     let direction: 'asc' | 'desc' = 'asc';
@@ -253,7 +292,7 @@ export default function LeakageDashboard() {
                 <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider cursor-pointer hover:text-slate-200" onClick={() => requestSort('action')}>
                   Recommended Action <ArrowUpDown className="w-3 h-3 inline ml-1" />
                 </th>
-                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider">Resolve</th>
+                <th className="p-4 text-xs font-bold text-slate-400 uppercase tracking-wider text-right">Resolve</th>
               </tr>
             </thead>
             <tbody>
@@ -305,35 +344,23 @@ export default function LeakageDashboard() {
                             {claim.action}
                           </span>
                         </td>
-                        <td className="p-4 flex gap-2">
-                          <button 
-                            onClick={() => addToast(`AI Assistant auditing claim ${claim.id}. Identifying potential variance...`, 'info')}
-                            className="p-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 rounded-lg transition-colors" 
-                            title="AI Assistant Audit"
-                          >
-                            <Sparkles className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={() => addToast(`Initiating call with ${claim.policyHolder} regarding claim variance.`, 'info')}
-                            className="p-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 rounded-lg transition-colors" 
-                            title="Call Policyholder"
-                          >
-                            <Phone className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={() => addToast(`Verification email sent to ${claim.policyHolder}. Pending response.`, 'success')}
-                            className="p-2 bg-slate-800 hover:bg-slate-700 text-cyan-400 rounded-lg transition-colors" 
-                            title="Send Email"
-                          >
-                            <Mail className="w-4 h-4" />
-                          </button>
-                          <button 
-                            onClick={() => addToast(`Initiating detailed investigation for claim ${claim.id}...`, 'info')}
-                            className="p-2 bg-slate-800 hover:bg-slate-700 text-rose-400 rounded-lg transition-colors" 
-                            title="Flag for Manual Review"
-                          >
-                            <ShieldAlert className="w-4 h-4" />
-                          </button>
+                        <td className="p-4">
+                          <div className="flex items-center justify-end gap-2">
+                            <button 
+                              onClick={() => addToast(`Initiating detailed investigation for claim ${claim.id}...`, 'info')}
+                              className="p-2 bg-slate-800 hover:bg-slate-700 text-rose-400 rounded-lg transition-colors" 
+                              title="Flag for Manual Review"
+                            >
+                              <ShieldAlert className="w-4 h-4" />
+                            </button>
+                            <button 
+                              onClick={() => handleResolve(claim.id)}
+                              className="p-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 rounded-lg transition-colors" 
+                              title="Mark as Resolved"
+                            >
+                              <CheckCircle className="w-4 h-4" />
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     ))}

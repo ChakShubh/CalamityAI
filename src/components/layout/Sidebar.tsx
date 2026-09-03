@@ -3,15 +3,35 @@ import { Radio, FlaskConical, Server, ChevronLeft, ChevronRight, Newspaper, BarC
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const links = [
-  { to: '/', icon: Radio, label: 'Live Intelligence' },
-  { to: '/simulator', icon: FlaskConical, label: 'Crisis Simulator' },
-  { to: '/infrastructure', icon: Server, label: 'Infrastructure Resilience' },
-  { to: '/news', icon: Newspaper, label: 'AI News Analytics' },
-  { to: '/analytics', icon: BarChart3, label: 'Exec Analytics' },
-  { to: '/recommender', icon: BrainCircuit, label: 'Policy Recommender' },
-  { to: '/priority', icon: ClipboardList, label: 'High Priority Cases' },
-  { to: '/leakages', icon: ShieldAlert, label: 'Leakage Control' },
+const sections = [
+  {
+    title: 'Intelligence',
+    links: [
+      { to: '/', icon: Radio, label: 'Live Intelligence' },
+      { to: '/news', icon: Newspaper, label: 'News Analytics Hub' },
+    ]
+  },
+  {
+    title: 'Simulation',
+    links: [
+      { to: '/simulator', icon: FlaskConical, label: 'Crisis Simulator' },
+      { to: '/infrastructure', icon: Server, label: 'Infrastructure Resilience' },
+    ]
+  },
+  {
+    title: 'Operations',
+    links: [
+      { to: '/analytics', icon: BarChart3, label: 'Executive Operations Suite' },
+      { to: '/priority', icon: ClipboardList, label: 'High Priority Cases' },
+      { to: '/leakages', icon: ShieldAlert, label: 'Leakage Control' },
+    ]
+  },
+  {
+    title: 'Predictions',
+    links: [
+      { to: '/recommender', icon: BrainCircuit, label: 'Policy Recommender' },
+    ]
+  }
 ];
 
 export default function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean; setMobileOpen: (o: boolean) => void }) {
@@ -42,22 +62,32 @@ export default function Sidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boo
           <span className="text-xs font-bold text-slate-300 uppercase tracking-widest">Navigation</span>
           <button onClick={() => setMobileOpen(false)} className="text-slate-500">x</button>
         </div>
-      <nav className="flex-1 space-y-1 px-2">
-        {links.map(link => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            className={({ isActive }) =>
-              `flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xs font-medium transition-all duration-200 group ${
-                isActive
-                  ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
-                  : 'text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 border border-transparent'
-              }`
-            }
-          >
-            <link.icon className="w-4 h-4 flex-shrink-0" />
-            {!collapsed && <span className="truncate">{link.label}</span>}
-          </NavLink>
+      <nav className="flex-1 space-y-4 px-2 overflow-y-auto custom-scrollbar">
+        {sections.map(section => (
+          <div key={section.title} className="space-y-1">
+            {!collapsed && (
+              <h3 className="px-3 text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 opacity-60">
+                {section.title}
+              </h3>
+            )}
+            {section.links.map(link => (
+              <NavLink
+                key={link.to}
+                to={link.to}
+                onClick={() => setMobileOpen(false)}
+                className={({ isActive }) =>
+                  `flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 group ${
+                    isActive
+                      ? 'bg-cyan-500/10 text-cyan-400 border border-cyan-500/20'
+                      : 'text-slate-400 hover:bg-slate-700/30 hover:text-slate-200 border border-transparent'
+                  }`
+                }
+              >
+                <link.icon className="w-4 h-4 flex-shrink-0" />
+                {!collapsed && <span className="truncate">{link.label}</span>}
+              </NavLink>
+            ))}
+          </div>
         ))}
       </nav>
       <button
