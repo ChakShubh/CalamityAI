@@ -84,7 +84,7 @@ export default function TopNav({ onMenuClick, onLogout }: { onMenuClick: () => v
           <Shield className="w-4 h-4 text-cyan-400" />
         </div>
         <div>
-          <h1 className="text-xs sm:text-sm font-bold tracking-wider text-slate-100 uppercase">Latency Zero</h1>
+          <h1 className="text-xs sm:text-sm font-bold tracking-wider text-slate-100 uppercase">Calamity AI</h1>
           <p className="text-[10px] text-slate-500 hidden sm:block">Command Center</p>
         </div>
       </div>

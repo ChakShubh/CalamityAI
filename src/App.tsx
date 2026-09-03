@@ -54,9 +54,9 @@ function AnimatedRoutes() {
         <Route path="/infrastructure" element={<PageWrapper><InfrastructureResilience /></PageWrapper>} />
         <Route path="/news" element={<PageWrapper><NewsAnalytics /></PageWrapper>} />
         <Route path="/analytics" element={<PageWrapper><AnalyticsDashboard /></PageWrapper>} />
-        <Route path="/recommender" element={<PageWrapper><PolicyRecommender /></PageWrapper>} />
         <Route path="/leakages" element={<PageWrapper><LeakageDashboard /></PageWrapper>} />
         <Route path="/priority" element={<PageWrapper><HighPriorityDashboard /></PageWrapper>} />
+        <Route path="/recommender" element={<PageWrapper><PolicyRecommender /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );

@@ -135,7 +135,7 @@ export interface ToastMessage {
 interface DataContextType {
   disasters: DisasterEvent[];
   llmData: LLMItem[];
-  /** Full merged corpus for AI News Analytics only (managed + global). Live Intelligence uses `llmData` only. */
+  /** Full merged corpus for News Analytics Hub only (managed + global). Live Intelligence uses `llmData` only. */
   newsAnalyticsCorpus: LLMItem[];
   /** Ingested early-warning items produced by the Aegis Multi-Modal engine. */
   agenticEvents: LLMItem[];
@@ -208,7 +208,7 @@ export function DataProvider({ children }: { children: ReactNode }) {
 
   const policyHoldersDemo = useMemo(
     () => (policyHolders as PolicyHolder[]).filter(p => DEMO_CITIES.has(p.city)),
-    [policyHolders]
+    []
   );
 
   const managedCitiesSet = useMemo(
@@ -302,61 +302,13 @@ export function DataProvider({ children }: { children: ReactNode }) {
     return [...(llmData as LLMItem[]), ...agenticEvents]
       .filter(item => DEMO_CITIES.has(item.city as DemoCity))
       .map(item => {
-        const text = (item.title + ' ' + (item.text || '')).toLowerCase();
-        
-        // 1. Determine if it's a Post-Event (Damage Report)
-        const isPostEvent = item.category === 'news_alert' && (
-          text.includes('damage') || text.includes('casualty') || text.includes('cleanup') || 
-          text.includes('destruction') || text.includes('recovery') || text.includes('bodies recovered')
-        );
-
-        // 2. Extract / Simulate Predicted Time
-        let extractedPredictedTime = item.predicted_time;
-        
-        // Logical Fix: No "Starting Soon" for Past events
-        if (isPostEvent) {
-          extractedPredictedTime = undefined;
-        } else if (!extractedPredictedTime) {
-          const hoursMatch = text.match(/in (?:exactly )?(\d+) hours?/i);
-          const soonMatch = text.match(/imminent|starting soon|next few hours/i);
-          const peakMatch = text.match(/peak expected|maximum intensity soon/i);
-          
-          if (hoursMatch) {
-            extractedPredictedTime = new Date(Date.now() + parseInt(hoursMatch[1], 10) * 3600000).toISOString();
-          } else if (peakMatch) {
-            extractedPredictedTime = new Date(Date.now() + 4 * 3600000).toISOString(); // Peak in 4h
-          } else if (soonMatch) {
-            extractedPredictedTime = new Date(Date.now() + 2 * 3600000).toISOString(); // 2h from now
-          }
-        }
-
-        // 3. Determine Timestamp (Human Readable / Simulation)
-        let finalTimestamp = item.timestamp || item.date;
-        if (isPostEvent) {
-          finalTimestamp = new Date(Date.now() - 36 * 3600000).toISOString();
-        } else if (text.includes('expected in next 5 days') || text.includes('upcoming forecast') || item.id >= 3000) {
-          // Future / Upcoming event (e.g. Jakarta/Sydney/Miami new ones)
-          finalTimestamp = new Date(Date.now() + 120 * 3600000).toISOString();
-          extractedPredictedTime = new Date(Date.now() + 144 * 3600000).toISOString();
-        }
-
-        // 4. Event Trail Logic (Connected Events) - Limited to single monsoon case
-        let trailId = null;
-        if (item.id === 2002 || text.includes('linked to the same monsoon cell')) {
-           trailId = `${item.city}-monsoon-trail`;
-        }
-
         const h = hashString(`intel-${item.id}-${item.city}`);
         
         return {
           ...item,
           country: item.country || cityToCountry[item.city] || 'Global',
-          predicted_time: extractedPredictedTime,
-          isPostEvent,
-          isPeakSoon: !isPostEvent && text.includes('peak expected'),
-          timestamp: finalTimestamp,
-          trailId,
           intelNarrative: buildIntelNarrative(item, h),
+          timestamp: item.timestamp || item.date || new Date().toISOString(),
         };
       });
   }, [agenticEvents]);

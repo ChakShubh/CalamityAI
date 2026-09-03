@@ -1,16 +1,16 @@
 import { useState, useEffect, useMemo } from 'react';
 import { MapContainer, TileLayer, Circle, Tooltip, useMap } from 'react-leaflet';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
-  FlaskConical, Flame, Clock, Globe, Users, FileText, 
-  TrendingUp, BarChart3, AlertCircle, ShieldAlert, Zap, Droplets, 
-  BrainCircuit, Wind, Activity, ZapOff, Thermometer, History, Eye, Layers
+  FlaskConical, Flame, Clock, Globe, Users, 
+  ShieldAlert, Droplets, 
+  BrainCircuit, Wind, Activity, ZapOff, Thermometer, History, Eye
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { holderDisplayLatLng, fieldTeamLandPositions } from '../../utils/holderMapCoords';
 import { getEventTemporalPhase } from '../../utils/eventPhase';
 import { 
-  BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, 
+  Tooltip as RechartsTooltip, 
   ResponsiveContainer, Cell, PieChart, Pie, AreaChart, Area
 } from 'recharts';
 
@@ -206,7 +206,7 @@ export default function CrisisSimulator() {
     const rawAffected = Math.round(exposed * propAffected * stress);
     const rawClaims = Math.round(exposed * propClaims * stress);
     // Claims are a subset of harmed/exposed population; affected should track reach like claims.
-    let claims = Math.min(exposed, Math.max(0, rawClaims));
+    const claims = Math.min(exposed, Math.max(0, rawClaims));
     let affected = Math.min(exposed, Math.max(0, rawAffected));
     if (claims > affected) affected = Math.min(exposed, claims);
 

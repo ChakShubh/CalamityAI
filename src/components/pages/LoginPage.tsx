@@ -33,7 +33,7 @@ export default function LoginPage({ onLogin }: LoginPageProps) {
             <ShieldCheck className="w-5 h-5 text-cyan-400" />
           </div>
           <div>
-            <h1 className="text-lg font-bold">Latency Zero</h1>
+            <h1 className="text-lg font-bold">Calamity AI</h1>
             <p className="text-xs text-slate-400">Sign in to continue</p>
           </div>
         </div>

@@ -1,13 +1,13 @@
 const TICKER_ITEMS = [
-  'HURRICANE WATCH -- Miami-Dade & Broward, FL (demo portfolio)',
-  'MONSOON CELL -- Mumbai MMR heavy rain, BMC war room active',
+  'HURRICANE WATCH -- Miami-Dade & Broward County, FL (Active Ingress Sector)',
+  'MONSOON CELL -- Mumbai MMR heavy precipitation, BMC disaster war room active',
   'DAM OPERATIONS -- Citarum headwater releases monitored, Greater Jakarta',
-  'FIRE WEATHER -- NSW RFS elevated readiness, Sydney basin',
-  'SYSTEM STATUS -- 4-city demo feed online',
-  'API GATEWAY -- Latency nominal at 45ms avg',
-  'ADJUSTER POOL -- Regional surge slots open',
-  'SATELLITE -- GOES / Himawari refresh aligned to active events only',
-  'CLAIMS PIPELINE -- Portfolio-scoped to demo metros',
+  'FIRE WEATHER -- NSW RFS elevated operational readiness, Sydney basin perimeter',
+  'SYSTEM STATUS -- Multi-Metro Satellite Telemetry Link Online',
+  'API GATEWAY -- Latency nominal at 42ms avg across edge nodes',
+  'ADJUSTER POOL -- Regional emergency deployment slots open',
+  'SATELLITE TELEMETRY -- GOES-16 & Himawari-9 synchronized to active tracking grids',
+  'CLAIMS PIPELINE -- High-Velocity Ingestion & Real-Time Fraud Triage Active',
 ];
 
 export default function TickerTape() {

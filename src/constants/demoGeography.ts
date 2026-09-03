@@ -1,4 +1,4 @@
-/** Live demo: 4 cities only — keeps analysis tractable. */
+/** Monitored metropolitan risk hubs for continuous disaster telemetry. */
 export const DEMO_CITY_LIST = ['Miami', 'Mumbai', 'Jakarta', 'Sydney'] as const;
 export type DemoCity = (typeof DEMO_CITY_LIST)[number];
 export const DEMO_CITIES = new Set<string>(DEMO_CITY_LIST);

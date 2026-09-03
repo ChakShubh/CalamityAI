@@ -5,21 +5,21 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Radio, AlertTriangle, MapPin, MessageSquare, ShieldAlert, FileWarning,
+  Radio, AlertTriangle, MapPin, ShieldAlert, FileWarning,
   Send, Layers, X, BrainCircuit, Filter, BarChart3, Newspaper,
-  TrendingUp, AlertCircle, Users, Zap, Droplets, Wind, Info, Activity, Clock, ChevronRight,
+  TrendingUp, AlertCircle, Users, Info, Activity, Clock, ChevronRight,
   ClipboardList, Wallet, Truck, Globe, ArrowRight, History as HistoryIcon, FileText
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
-import { getEventTemporalPhase, hoursUntilFuture } from '../../utils/eventPhase';
+import { getEventTemporalPhase } from '../../utils/eventPhase';
 import { formatIntelTime } from '../../utils/formatIntelTime';
 import { CITY_COORDS, type DemoCity } from '../../constants/demoGeography';
 import { EXPOSURE_RADIUS_KM_PER_MAGNITUDE } from '../../constants/exposureModel';
 import MultiModalIngestionModal from '../features/MultiModalIngestionModal';
 import {
-  BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell,
+  BarChart, Bar, XAxis, ResponsiveContainer, Cell,
   Tooltip as RechartsTooltip, Radar, RadarChart, PolarGrid,
-  PolarAngleAxis, PolarRadiusAxis
+  PolarAngleAxis
 } from 'recharts';
 
 function isCalamityCategory(category: string | undefined): boolean {
@@ -27,8 +27,7 @@ function isCalamityCategory(category: string | undefined): boolean {
 }
 
 function getFeedItemPhase(topic: { isPostEvent?: boolean; predicted_time?: string; timestamp: string }): 'pre' | 'active' | 'post' {
-  if (topic.isPostEvent) return 'post';
-  if (topic.predicted_time && new Date(topic.predicted_time).getTime() > Date.now()) return 'pre';
+  if (topic.predicted_time) return getEventTemporalPhase(topic.predicted_time);
   return getEventTemporalPhase(topic.timestamp);
 }
 
@@ -225,7 +224,7 @@ function TopicModal({ topic, onClose, onSelectReport }: { topic: any, onClose: (
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass w-full max-w-lg rounded-3xl border border-slate-700/50 overflow-hidden shadow-2xl flex flex-col max-h-[80vh]"
+        className="glass w-full max-w-lg rounded-3xl border border-slate-700/50 overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
       >
         <div className="p-5 border-b border-slate-800 flex justify-between items-center bg-slate-900/30">
           <div className="min-w-0 pr-2">
@@ -234,22 +233,7 @@ function TopicModal({ topic, onClose, onSelectReport }: { topic: any, onClose: (
             </h2>
             <p className="text-[10px] text-slate-500 uppercase font-bold tracking-widest mt-1">
               {topic.reportCount} Verified Reports in {topic.city}
-              {topic.chainTrail?.length > 1 && (
-                <span className="text-cyan-500/90 normal-case font-semibold"> · single linked event trail</span>
-              )}
             </p>
-            {topic.chainTrail && topic.chainTrail.length > 1 && (
-              <div className="mt-3 flex flex-wrap items-center gap-1 text-[9px] text-slate-400">
-                {topic.chainTrail.map((step: any, si: number) => (
-                  <span key={step.id} className="flex items-center gap-1 min-w-0">
-                    {si > 0 && <ChevronRight className="w-3 h-3 text-slate-600 shrink-0" />}
-                    <span className="truncate max-w-[140px] rounded bg-slate-800/80 px-1.5 py-0.5 border border-slate-700/60 text-slate-300" title={step.title}>
-                      {step.event_chain_order != null ? `Stage ${step.event_chain_order}: ` : ''}{step.title}
-                    </span>
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
           <button onClick={onClose} className="p-2 hover:bg-slate-800 rounded-full transition-colors">
             <X className="w-5 h-5 text-slate-400" />
@@ -257,6 +241,7 @@ function TopicModal({ topic, onClose, onSelectReport }: { topic: any, onClose: (
         </div>
 
         <div className="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+          <h3 className="text-[9px] font-bold text-slate-500 uppercase tracking-widest px-1 mb-1">Calamity Intelligence Log</h3>
           {topic.reports.map((report: any, idx: number) => (
             <div
               key={`${report.id}-${idx}`}
@@ -265,7 +250,7 @@ function TopicModal({ topic, onClose, onSelectReport }: { topic: any, onClose: (
             >
               <div className="flex justify-between items-start mb-2">
                 <span className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-1.5">
-                  <Activity className="w-3 h-3" /> Report #{idx + 1}
+                  <Activity className="w-3 h-3" /> Report #{topic.reports.length - idx}
                 </span>
                 <span className="text-[9px] text-slate-500 font-mono">{formatIntelTime(report.timestamp)}</span>
               </div>
@@ -274,17 +259,20 @@ function TopicModal({ topic, onClose, onSelectReport }: { topic: any, onClose: (
                 <div className="flex items-center gap-2">
                   <div className="text-[8px] px-1.5 py-0.5 bg-slate-800 rounded text-slate-400 font-mono">{report.source || 'Intel Hub'}</div>
                   {isCalamityCategory(report.category) && (
-                    <div className="text-[8px] px-1.5 py-0.5 bg-rose-500/10 text-rose-400 rounded font-bold">HIGH RISK</div>
+                    <div className="text-[8px] px-1.5 py-0.5 bg-rose-500/10 text-rose-400 rounded font-bold uppercase tracking-tighter">Verified Alert</div>
                   )}
                 </div>
-                <ChevronRight className="w-4 h-4 text-slate-600 group-hover:text-cyan-400 transition-colors" />
+                <div className="flex items-center gap-1 text-[9px] font-bold text-cyan-500/0 group-hover:text-cyan-500 transition-all">
+                  <span>Full Intelligence</span>
+                  <ChevronRight className="w-3 h-3" />
+                </div>
               </div>
             </div>
           ))}
         </div>
 
         <div className="p-4 bg-slate-900/50 border-t border-slate-800">
-          <button onClick={onClose} className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold uppercase transition-all">Close Topic View</button>
+          <button onClick={onClose} className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold uppercase transition-all">Close Intelligence Report</button>
         </div>
       </motion.div>
     </div>
@@ -298,7 +286,7 @@ function IncidentFeed({ phaseFilter, setPhaseFilter, aggregatedNews, onSelectCar
   onSelectCard: (t: any) => void;
   onOpenTopic: (t: any) => void;
 }) {
-  const { selectedDisaster, managedCities, globalRegion, setGlobalRegion, disasters, setUnifiedDashboardRegion } = useData();
+  const { selectedDisaster, managedCities, globalRegion, disasters, setUnifiedDashboardRegion } = useData();
   const [countryFilter, setCountryFilter] = useState('All');
 
   const canonicalScenarioByCity = useMemo(() => {
@@ -361,10 +349,22 @@ function IncidentFeed({ phaseFilter, setPhaseFilter, aggregatedNews, onSelectCar
     return Array.from(set).sort();
   }, [aggregatedNews, countryFilter]);
 
+  const getEventDate = (item: any) => {
+    // Priority 1: Check for a scenario that matches both city AND disaster type
+    const scenario = Array.from(canonicalScenarioByCity.values()).find(
+      s => s.Location.City === item.city && itemMatchesScenarioType(item, s)
+    );
+    if (scenario) return scenario.Date;
+    
+    // Priority 2: A specific predicted time in the news report
+    if (item.predicted_time) return item.predicted_time;
+    
+    // Fallback: The report's own timestamp
+    return item.timestamp;
+  };
+
   const topicPhase = (item: any): 'pre' | 'active' | 'post' => {
-    const scenario = canonicalScenarioByCity.get(item.city);
-    if (scenario) return getEventTemporalPhase(scenario.Date);
-    return getAggregatedFeedPhase(item);
+    return getEventTemporalPhase(getEventDate(item));
   };
 
   const filteredItems = useMemo(() => {
@@ -382,25 +382,55 @@ function IncidentFeed({ phaseFilter, setPhaseFilter, aggregatedNews, onSelectCar
       })
       .sort((a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
-    /** Simplified feed: one canonical card per city to stay in sync with Crisis Simulator. */
-    const bestByCity = new Map<string, any>();
+    /** Expanded feed: allow multiple distinct calamities per city (e.g. a past flood and a future cyclone). */
+    const topics = new Map<string, any>();
     for (const item of base) {
-      const prev = bestByCity.get(item.city);
-      if (!prev) {
-        bestByCity.set(item.city, item);
-        continue;
+      const p = topicPhase(item);
+      const scenario = Array.from(canonicalScenarioByCity.values()).find(
+        s => s.Location.City === item.city && itemMatchesScenarioType(item, s)
+      );
+      const type = scenario ? scenario.Disaster_Type : (item.title?.split(' ')[0] || 'General');
+      const key = `${item.city}-${type}-${p}`;
+
+      if (!topics.has(key)) {
+        topics.set(key, { ...item, reports: [item], reportCount: 1 });
+      } else {
+        const existing = topics.get(key);
+        existing.reports.push(item);
+        existing.reportCount++;
+        
+        // Update the canonical fields (title, timestamp, etc.) if the new item has a better score
+        const score = (x: any) => {
+          let s = 0;
+          const title = (x.title || '').toUpperCase();
+          if (title.includes('ACTIVE:')) s += 20;
+          if (title.includes('PREDICTION:')) s += 15;
+          if (title.includes('URGENT:')) s += 12;
+          if (title.includes('ALERT:')) s += 10;
+          s += new Date(x.timestamp).getTime() / 1e13;
+          return s;
+        };
+        
+        if (score(item) > score(existing)) {
+          // Keep the reports array but update other fields
+          const reports = existing.reports;
+          const count = existing.reportCount;
+          Object.assign(existing, item);
+          existing.reports = reports;
+          existing.reportCount = count;
+        }
       }
-      const score = (x: any) => {
-        let s = 0;
-        if (x.event_chain_id) s += 3;
-        if ((x.reportCount ?? 1) > 1) s += 1;
-        s += new Date(x.timestamp).getTime() / 1e13;
-        return s;
-      };
-      if (score(item) > score(prev)) bestByCity.set(item.city, item);
     }
-    return Array.from(bestByCity.values()).sort(
-      (a: any, b: any) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    return Array.from(topics.values()).sort(
+      (a: any, b: any) => {
+        // Chronological sort by disaster event timeline (Upcoming -> Ongoing -> Historical)
+        const dateA = new Date(getEventDate(a)).getTime();
+        const dateB = new Date(getEventDate(b)).getTime();
+        if (dateB !== dateA) return dateB - dateA;
+        
+        // Secondary sort: Impact score
+        return (parseFloat(b.impactScore) || 0) - (parseFloat(a.impactScore) || 0);
+      }
     );
   }, [aggregatedNews, canonicalScenarioByCity, countryFilter, globalRegion, phaseFilter, selectedDisaster, disasters]);
 
@@ -474,11 +504,9 @@ function IncidentFeed({ phaseFilter, setPhaseFilter, aggregatedNews, onSelectCar
           {filteredItems.map((topic: any, i: number) => {
             const isSelected = selectedDisaster?.Location.City === topic.city;
             const uniqueKey = `${topic.event_chain_id || topic.city}-${topic.title}-${i}`;
-            const isPost = topic.isPostEvent;
             const tPhase = topicPhase(topic);
+            const isPost = tPhase === 'post';
             const phaseLabel = tPhase === 'pre' ? 'Upcoming' : tPhase === 'post' ? 'Past' : 'Ongoing';
-            const etaHours = hoursUntilFuture(topic.predicted_time);
-            const peakSoon = etaHours != null && etaHours <= 48 && tPhase !== 'post';
 
             return (
               <motion.div
@@ -509,7 +537,12 @@ function IncidentFeed({ phaseFilter, setPhaseFilter, aggregatedNews, onSelectCar
                       {isCalamityCategory(topic.category) ? <AlertTriangle className="w-3.5 h-3.5" /> : <Newspaper className="w-3.5 h-3.5" />}
                     </div>
                     <div>
-                      <div className="text-[10px] font-bold text-slate-200 group-hover:text-cyan-400 transition-colors uppercase tracking-tight line-clamp-1">{topic.title}</div>
+                      <div className="text-[10px] font-bold text-slate-200 group-hover:text-cyan-400 transition-colors uppercase tracking-tight line-clamp-1">
+                        <span className={`mr-1.5 ${tPhase === 'pre' ? 'text-amber-400' : tPhase === 'active' ? 'text-rose-400' : 'text-slate-500'}`}>
+                          {tPhase === 'pre' ? 'PREDICTION:' : tPhase === 'active' ? 'ACTIVE:' : 'ARCHIVE:'}
+                        </span>
+                        {topic.title.replace(/^(ACTIVE|PREDICTION|ARCHIVE|ALERT|URGENT):/i, '').trim()}
+                      </div>
                       <div className="text-[8px] text-slate-500 flex items-center gap-1"><MapPin className="w-2.5 h-2.5" /> {topic.city} • {formatDate(topic.timestamp)}</div>
                     </div>
                   </div>
@@ -536,20 +569,22 @@ function IncidentFeed({ phaseFilter, setPhaseFilter, aggregatedNews, onSelectCar
                 </div>
 
                 <div className="flex items-center gap-2 mt-1">
-                  {topic.predicted_time &&
-                    !isPost &&
-                    new Date(topic.predicted_time).getTime() > Date.now() ? (
+                  {tPhase === 'pre' ? (
                     <span className="text-[8px] bg-rose-500/20 text-rose-400 px-1.5 py-0.5 rounded font-mono border border-rose-500/20 flex items-center gap-1">
-                      <Clock className="w-2 h-2" /> ETA: {formatDate(topic.predicted_time)}
+                      <Clock className="w-2 h-2" /> ETA: {formatDate(getEventDate(topic))}
                     </span>
-                  ) : isPost ? (
+                  ) : tPhase === 'active' ? (
+                    <span className="text-[8px] bg-cyan-500/20 text-cyan-400 px-1.5 py-0.5 rounded font-mono border border-cyan-500/20 flex items-center gap-1">
+                      <Activity className="w-2 h-2" /> STARTED: {formatDate(getEventDate(topic))}
+                    </span>
+                  ) : tPhase === 'post' ? (
                     <span className="text-[8px] bg-slate-500/20 text-slate-400 px-1.5 py-0.5 rounded font-mono border border-slate-500/20 flex items-center gap-1">
-                      <HistoryIcon className="w-2 h-2" /> DAMAGE REPORT
+                      <HistoryIcon className="w-2 h-2" /> OCCURRED: {formatDate(getEventDate(topic))}
                     </span>
                   ) : null}
                   {topic.duration_days && (
-                    <span className="text-[8px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-mono border border-amber-500/20">
-                      {topic.duration_days} Days
+                    <span className="text-[8px] bg-amber-500/20 text-amber-400 px-1.5 py-0.5 rounded font-mono border border-amber-500/30">
+                      Duration: {topic.duration_days} Days
                     </span>
                   )}
                 </div>
@@ -1088,7 +1123,7 @@ export default function LiveIntelligence() {
               <Users className="w-4 h-4" />
               <span className="text-[9px] font-bold uppercase tracking-widest hidden xl:inline">Exposure Heatmap</span>
             </button>
-            <button
+            {/* <button
               type="button"
               disabled={satelliteNotAllowed}
               title={satelliteNotAllowed ? 'Satellite damage imagery is available once an event is active or has occurred (not for forecast-only scenarios).' : 'Toggle satellite base layer for damage context'}
@@ -1102,7 +1137,7 @@ export default function LiveIntelligence() {
             >
               <Layers className="w-4 h-4" />
               <span className="text-[9px] font-bold uppercase tracking-widest hidden xl:inline">Satellite Damage View</span>
-            </button>
+            </button> */}
           </div>
 
           <MapToggles active={mapStyle} onChange={setMapStyle} styles={MAP_STYLES} />
